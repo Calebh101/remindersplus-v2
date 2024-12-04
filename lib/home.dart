@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:personal/widgets.dart';
+import 'package:localpkg/widgets.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,6 +13,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // status: true means complete, false means incomplete
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   int mode = 1;
   String view = "all";
@@ -277,9 +281,19 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(getTextForView(view)),
         centerTitle: true,
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: Icon(FontAwesomeIcons.bars),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          }
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: Icon(FontAwesomeIcons.plus),
             onPressed: () async {
               dynamic response = await editItem({"name": "", "status": false}, 2);
               if (response != null && !response.containsKey("invalid")) {
@@ -298,7 +312,7 @@ class _HomePageState extends State<HomePage> {
             },
           ),
           IconButton(
-            icon: Icon(mode == 1 ? Icons.edit : Icons.checklist),
+            icon: Icon(mode == 1 ? FontAwesomeIcons.penToSquare : FontAwesomeIcons.listCheck),
             onPressed: () {
               mode = mode == 1 ? 2 : 1;
               refresh(items);
@@ -313,7 +327,7 @@ class _HomePageState extends State<HomePage> {
             Text("Lists", style: TextStyle(fontSize: 28)),
             SettingTitle(title: "Categories"),
             ListTile(
-              leading: Icon(Icons.checklist),
+              leading: Icon(FontAwesomeIcons.listCheck),
               title: Text("All Reminders"),
               subtitle: Text("$allItemCount reminders"),
               onTap: () {
@@ -322,7 +336,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.check_box_outlined),
+              leading: Icon(FontAwesomeIcons.squareCheck),
               title: Text("Complete"),
               subtitle: Text("$completeItemCount reminders"),
               onTap: () {
@@ -331,7 +345,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.check_box_outline_blank),
+              leading: Icon(FontAwesomeIcons.square),
               title: Text("Incomplete"),
               subtitle: Text("$incompleteItemCount reminders"),
               onTap: () {
@@ -340,7 +354,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.today),
+              leading: Icon(FontAwesomeIcons.calendarDay),
               title: Text("Today"),
               subtitle: Text(DateFormat('MMMM d').format(now)),
               onTap: () {
@@ -349,7 +363,7 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.today),
+              leading: Icon(FontAwesomeIcons.calendarDays),
               title: Text("Tomorrow"),
               subtitle: Text(DateFormat('MMMM d').format(now.add(Duration(days: 1)))),
               onTap: () {
@@ -363,7 +377,7 @@ class _HomePageState extends State<HomePage> {
                 for (var item in keys)
                   ListTile(
                     title: Text(item),
-                    leading: Icon(Icons.checklist),
+                    leading: Icon(FontAwesomeIcons.listCheck),
                     onTap: () {
                       changeView(item);
                       Navigator.pop(context);
@@ -400,7 +414,7 @@ class _HomePageState extends State<HomePage> {
 
   Map setAlertShortcut(int mode, int index, Map response) {
     response = checkId(response);
-    String id = response["id"];
+    int id = response["id"];
 
     response["alert"] =
       response.containsKey("alert")
@@ -421,11 +435,11 @@ class _HomePageState extends State<HomePage> {
     return response;
   }
 
-  bool setAlert(int index, bool value, String id) {
+  Future<bool> setAlert(int index, bool value, int id) async {
     if (value) {
       // TODO: implement set notification
     } else {
-      // TODO: implement cancel notification
+      await flutterLocalNotificationsPlugin.cancel(id);
     }
     return true;
   }
@@ -646,7 +660,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: Icon(item["status"] ? Icons.check_box_outlined : Icons.check_box_outline_blank),
+                      icon: Icon(item["status"] ? FontAwesomeIcons.squareCheck : FontAwesomeIcons.square),
                       onPressed: () {
                         items[index]["status"] = !items[index]["status"];
                         refresh(items);
@@ -657,7 +671,7 @@ class _HomePageState extends State<HomePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: Icon(Icons.delete),
+                      icon: Icon(FontAwesomeIcons.trash),
                       style: ButtonStyle(
                         iconColor: WidgetStatePropertyAll(item["status"] ? Colors.blueAccent : Colors.redAccent),
                       ),
@@ -667,7 +681,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.edit),
+                      icon: Icon(FontAwesomeIcons.penToSquare),
                       onPressed: () async {
                         Map response = await editItem(item, 1);
                         if(response != null && !response.containsKey("invalid")) {
@@ -698,7 +712,7 @@ class _HomePageState extends State<HomePage> {
                 if (showReorderHandles && !overrideShowReorderHandles)
                   ReorderableDragStartListener(
                     index: index,
-                    child: Icon(Icons.drag_handle),
+                    child: Icon(FontAwesomeIcons.gripLines),
                   ),
               ],
             ),

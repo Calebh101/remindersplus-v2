@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:personal/dialogue.dart';
-import 'package:personal/widgets.dart';
+import 'package:localpkg/dialogue.dart';
+import 'package:localpkg/widgets.dart';
 import 'package:remindersplus/var.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

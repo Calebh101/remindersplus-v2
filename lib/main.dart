@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:quick_navbar/quick_navbar.dart';
 import 'package:remindersplus/home.dart';
 import 'package:remindersplus/settings.dart';
+import 'package:localpkg/theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,32 +19,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Reminders+',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          brightness: Brightness.light, // Explicitly specify light mode
-        ),
-        useMaterial3: true, // Enable Material 3
-      ),
-      darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          brightness: Brightness.dark, // Explicitly specify dark mode
-        ),
-        useMaterial3: true, // Enable Material 3
-      ),
+      theme: customTheme(darkMode: false, seedColor: Colors.lightBlue, textStyle: GoogleFonts.poppinsTextTheme()),
+      darkTheme: customTheme(darkMode: true, seedColor: Colors.lightBlue),
       home: QuickNavBar(
         items: [
           {
             "label": "Home",
-            "icon": Icons.home,
+            "icon": FontAwesomeIcons.house,
             "widget": HomePage(),
           },{
             "label": "Settings",
-            "icon": Icons.settings,
+            "icon": FontAwesomeIcons.gear,
             "widget": Settings(),
           },
-        ], selectedColor: Colors.blue,
+        ], selectedColor: Colors.blue, sidebarBeta: true,
       ),
     );
   }
